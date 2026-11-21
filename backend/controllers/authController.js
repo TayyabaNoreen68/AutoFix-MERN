@@ -6,9 +6,9 @@ const jwt = require("jsonwebtoken");
 // Signup Controller
 const signup = async (req, res) => {
   try {
-    //const { name, email, password } = req.body;
-const { name, email, password, phone } = req.body;
-    if (!name || !email || !password|| !phone) {
+    const { name, email, password, phone } = req.body;
+
+    if (!name || !email || !password || !phone) {
       return res.status(400).json({
         success: false,
         message: "Please provide all fields",
@@ -24,19 +24,19 @@ const { name, email, password, phone } = req.body;
       });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
+    // Public signup users will always have customer role
     user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-       phone,
-    });
+  name,
+  email,
+  password,
+  phone,
+  role: "customer",
+});
 
     const payload = {
       user: {
         id: user.id,
+        role: user.role,
       },
     };
 
@@ -50,6 +50,12 @@ const { name, email, password, phone } = req.body;
       success: true,
       message: "User registered successfully",
       token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.error("Signup Error:", error.message);
@@ -93,6 +99,7 @@ const login = async (req, res) => {
     const payload = {
       user: {
         id: user.id,
+        role: user.role,
       },
     };
 
@@ -106,6 +113,12 @@ const login = async (req, res) => {
       success: true,
       message: "Login successful",
       token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.error("Login Error:", error.message);

@@ -1,10 +1,10 @@
-
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/auth");
+const bookingRoutes = require("./routes/bookingRoutes");
 
 const app = express();
 
@@ -20,8 +20,9 @@ app.get("/", (req, res) => {
   res.send("Welcome to AutoFix API");
 });
 
-// Auth Routes
+// Auth & Booking Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;
